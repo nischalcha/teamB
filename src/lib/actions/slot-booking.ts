@@ -91,6 +91,44 @@ export async function bookSlotAction(formData: FormData): Promise<SlotBookingRes
   return { success: true, message: 'Slot booked successfully!' };
 }
 
+export async function cancelBookingAction(bookingId: number | string): Promise<SlotBookingResult> {
+  const user = await getCurrentUser();
+  if (!user) {
+    return { success: false, message: 'You must be logged in.' };
+  }
+
+  const payload = await getPayload({ config });
+
+  const booking = await payload.findByID({
+    collection: 'bookings',
+    id: Number(bookingId),
+    depth: 0,
+  });
+
+  if (!booking) {
+    return { success: false, message: 'Booking not found.' };
+  }
+
+  const ownerId = typeof booking.user === 'object' ? (booking.user as { id: number }).id : booking.user;
+  if (ownerId !== user.id) {
+    return { success: false, message: 'You can only cancel your own bookings.' };
+  }
+
+  if (booking.status === 'cancelled') {
+    return { success: false, message: 'This booking is already cancelled.' };
+  }
+
+  await payload.update({
+    collection: 'bookings',
+    id: Number(bookingId),
+    data: { status: 'cancelled' },
+  });
+
+  revalidatePath('/dashboard/bookings');
+  revalidatePath('/availability');
+  return { success: true, message: 'Booking cancelled successfully.' };
+}
+
 export async function getBookingsForDate(
   locationId: number | string,
   date: string,

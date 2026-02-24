@@ -2,8 +2,12 @@ import Link from 'next/link';
 import { getPayload } from 'payload';
 import config from '@payload-config';
 import { Container } from '@/components/Container';
+import { JoinButton } from '@/components/JoinButton';
+import { getCurrentUser } from '@/lib/auth';
 
 export default async function HomePage() {
+  const user = await getCurrentUser();
+  const isLoggedIn = !!user;
   const payload = await getPayload({ config });
 
   const { docs: services } = await payload.find({
@@ -346,7 +350,8 @@ export default async function HomePage() {
             tennis coaching in Kathmandu.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Link
+            <JoinButton
+              isLoggedIn={isLoggedIn}
               href="/availability"
               className="inline-flex rounded-full items-center gap-2 bg-primary px-10 py-4 text-sm font-bold uppercase tracking-wide text-black transition-colors hover:bg-primary-dark"
             >
@@ -354,7 +359,7 @@ export default async function HomePage() {
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
-            </Link>
+            </JoinButton>
             <Link
               href="/players"
               className="inline-flex rounded-full items-center border-2 border-white px-10 py-4 text-sm font-semibold text-white transition-colors hover:bg-white hover:text-black"

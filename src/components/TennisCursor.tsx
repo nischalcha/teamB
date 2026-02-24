@@ -101,7 +101,7 @@ export function TennisCursor() {
     <div
       ref={cursorRef}
       aria-hidden="true"
-      className="pointer-events-none fixed left-0 top-0 z-[9999] h-5 w-5 rounded-full border border-black/20 bg-primary opacity-0 shadow-[0_6px_14px_rgba(0,0,0,0.18)] transition-[opacity] duration-200"
+      className="pointer-events-none fixed left-0 top-0 z-[99999] h-5 w-5 rounded-full border border-black/20 bg-primary opacity-0 shadow-[0_6px_14px_rgba(0,0,0,0.18)] transition-[opacity] duration-200"
     >
       <span className="absolute -left-[10%] top-[20%] h-[55%] w-[120%] rounded-full border-t-2 border-black/50" />
       <span className="absolute -left-[10%] bottom-[20%] h-[55%] w-[120%] rounded-full border-b-2 border-black/50" />

@@ -22,7 +22,8 @@ const ADMIN_LINKS = [
 ] as const;
 
 const USER_LINKS = [
-  { href: '/dashboard', label: 'Book a Court' },
+  { href: '/dashboard', label: 'Dashboard' },
+  { href: '/dashboard/bookings', label: 'My Bookings' },
   { href: '/availability', label: 'Availability' },
   { href: '/players', label: 'Players' },
   { href: '/', label: 'Home' },
