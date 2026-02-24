@@ -1,19 +1,22 @@
 services:
   postgres:
-    container_name: postgres
-    image: postgres:latest
+    container_name: hackathon-postgres
+    image: postgres:16
     command: postgres -c 'max_connections=250'
     ports:
-      - "5432:5432"
+      - "5433:5432"
     environment:
       - POSTGRES_USER=local
       - POSTGRES_PASSWORD=secret
       - POSTGRES_DB=hackathon
     volumes:
-      - ./postgres-data:/var/lib/postgresql/data
+      - hackathon_pgdata:/var/lib/postgresql/data
     restart: always
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U local -d hackathon"]
       interval: 10s
       timeout: 5s
       retries: 5
+
+volumes:
+  hackathon_pgdata:
