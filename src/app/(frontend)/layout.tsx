@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Footer } from '@/components/Footer';
 import { Navbar } from '@/components/Navbar';
+import { TennisCursor } from '@/components/TennisCursor';
 import { getCurrentUser } from '@/lib/auth';
 import './globals.css';
 
@@ -20,6 +21,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className="flex min-h-screen flex-col antialiased">
+        <TennisCursor />
         <Navbar user={user} />
         <main className="flex-1">{children}</main>
         <Footer />

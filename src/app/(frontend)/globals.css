@@ -83,3 +83,15 @@ h1, h2, h3, h4, h5, h6 {
   opacity: 1;
   transform: translateY(0);
 }
+
+html.tennis-cursor-active,
+html.tennis-cursor-active body,
+html.tennis-cursor-active a,
+html.tennis-cursor-active button,
+html.tennis-cursor-active input,
+html.tennis-cursor-active textarea,
+html.tennis-cursor-active select,
+html.tennis-cursor-active label,
+html.tennis-cursor-active [role='button'] {
+  cursor: none !important;
+}
