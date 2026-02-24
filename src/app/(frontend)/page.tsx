@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { getPayload } from 'payload';
 import config from '@payload-config';
+import { AnimateInView } from '@/components/AnimateInView';
 import { Container } from '@/components/Container';
 
 export default async function HomePage() {
@@ -9,6 +10,7 @@ export default async function HomePage() {
   const { docs: services } = await payload.find({
     collection: 'services',
     limit: 10,
+    depth: 1,
   });
 
   const { docs: locations } = await payload.find({
@@ -17,129 +19,229 @@ export default async function HomePage() {
     depth: 1,
   });
 
+  const { docs: events } = await payload.find({
+    collection: 'events',
+    limit: 6,
+    depth: 1,
+    sort: 'startDate',
+  });
+
   return (
     <>
-      {/* Hero Section */}
-      <section className="relative bg-emerald-700 py-24 text-white sm:py-32">
-        <div className="absolute inset-0 bg-linear-to-br from-emerald-800 to-emerald-600" />
-        <Container className="relative">
-          <div className="mx-auto max-w-2xl text-center">
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+      {/* ───── Banner ───── */}
+      <section className="w-full">
+        <div className="grid grid-cols-1 md:grid-cols-3">
+          <div className="relative h-[300px] overflow-hidden md:h-[600px]">
+            <img
+              src="/assests/tennis1.jpg"
+              alt="Tennis ball in net"
+              className="h-full w-full object-cover"
+            />
+          </div>
+
+          <div className="flex flex-col items-center justify-center bg-primary px-8 py-12 text-center md:py-0">
+            <span className="mb-3 text-xs font-bold uppercase tracking-[0.25em] text-black/60">
               Flash Sports Academy
+            </span>
+            <h2 className="text-3xl font-extrabold uppercase italic leading-tight text-black md:text-4xl">
+              Train With
+              <br />
+              The Best In
+              <br />
+              Nepal
+            </h2>
+            <Link
+              href="/availability"
+              className="mt-6 rounded-full border-2 border-black bg-black px-8 py-3 text-xs font-bold uppercase tracking-widest text-white transition-colors hover:bg-transparent hover:text-black"
+            >
+              Book Now
+            </Link>
+          </div>
+
+          <div className="relative h-[300px] overflow-hidden md:h-[600px]">
+            <img
+              src="/assests/tennis2.jpg"
+              alt="Tennis rackets on clay court"
+              className="h-full w-full object-cover"
+            />
+          </div>
+        </div>
+      </section>
+
+      
+
+      {/* ───── Services / Programs ───── */}
+      <section className="bg-white py-16 sm:py-24">
+        <Container>
+          <div className="mb-8 flex items-center justify-between px-1">
+            <h2 className="text-2xl text-center mx-auto font-bold uppercase italic tracking-tight text-black sm:text-3xl">
+              Our Services
+            </h2>
+            <Link
+              href="/availability"
+              className="text-sm bg-black rounded-full px-4 py-2 text-white font-semibold transition-colors"
+            >
+              View All
+            </Link>
+          </div>
+
+          <div className="flex gap-6 overflow-x-auto pb-4 no-scrollbar sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-3">
+            {services.map((service) => {
+              const thumbUrl =
+                service.thumbnail &&
+                typeof service.thumbnail === 'object' &&
+                'url' in service.thumbnail
+                  ? (service.thumbnail.url as string)
+                  : null;
+
+              return (
+                <div
+                  key={service.id}
+                  className="group w-[85%] shrink-0 snap-center overflow-hidden border border-black/10 bg-white shadow-sm transition-shadow hover:shadow-lg sm:w-auto"
+                >
+                  <div
+                    className="relative h-52 w-full bg-black/5 bg-cover bg-center"
+                    style={thumbUrl ? { backgroundImage: `url('${thumbUrl}')` } : undefined}
+                  >
+                    <div className="absolute inset-0 bg-linear-to-t from-black to-transparent" />
+                    <div className="absolute bottom-4 left-4">
+                      <span className="text-xl font-extrabold text-white">
+                        NPR {service.price?.toLocaleString()}
+                        <span className="text-xs font-normal text-white/60">
+                          /{service.pricingUnit}
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+                  <div className="p-5">
+                    <span className="mb-2 inline-block bg-primary/20 px-3 py-0.5 text-[10px] font-bold uppercase tracking-wide text-black">
+                      {service.category === 'adults' ? 'Adults' : 'Kids'} &middot;{' '}
+                      {service.timing === 'morning' ? 'Morning' : 'Evening'}
+                    </span>
+                    <h3 className="text-lg font-extrabold uppercase italic leading-tight text-black">
+                      {service.name}
+                    </h3>
+                    <Link
+                      href="/availability"
+                      className="mt-4 rounded-full block w-full bg-black py-3 text-center text-xs font-bold uppercase tracking-widest text-white transition-colors hover:bg-primary hover:text-black"
+                    >
+                      Join Program
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </Container>
+      </section>
+
+{/* ───── Hero ───── */}
+<section className="relative h-[520px] w-full overflow-hidden sm:h-[600px]">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1554068865-24cecd4e34b8?auto=format&fit=crop&w=1920&q=80')",
+          }}
+        />
+        <div className="absolute inset-0 bg-linear-to-t from-black via-black/60 to-transparent" />
+
+        <div className="absolute inset-x-0 bottom-20 p-6 sm:p-12">
+          <Container>
+            <div className="flex flex-col items-center justify-center">
+            <span className="mb-4 inline-block bg-primary px-1 py-1 text-xs font-bold uppercase tracking-widest text-black">
+              Nepal&apos;s #1 Tennis Academy
+            </span>
+            <h1 className="text-4xl font-extrabold uppercase italic leading-none tracking-tight text-white sm:text-5xl lg:text-6xl">
+              Unleash Your
+              <span className="text-primary">Tennis Potential</span>
             </h1>
-            <p className="mt-6 text-lg leading-8 text-emerald-100">
-              Nepal&apos;s premier tennis training facility. Professional coaching for
-              adults and kids across our Baluwatar and Budhanilkantha locations.
+            <p className="mt-4 text-base text-white/70 sm:text-lg">
+              World-class coaching and premium clay courts across our Baluwatar
+              &amp; Budhanilkantha facilities.
             </p>
-            <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <div className="mt-8 flex flex-wrap gap-4">
               <Link
                 href="/availability"
-                className="rounded-full bg-white px-8 py-3 text-sm font-semibold text-emerald-700 shadow-sm transition-colors hover:bg-emerald-50"
+                className="inline-flex items-center gap-2 bg-primary px-8 py-4 text-sm font-bold uppercase tracking-wide text-black transition-colors hover:bg-primary-dark"
               >
-                Book Your Free Lesson
+                Book Free Lesson
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
               </Link>
               <Link
                 href="/players"
-                className="rounded-full border border-white/30 px-8 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+                className="inline-flex items-center border-2 border-white px-8 py-4 text-sm font-semibold text-white transition-colors hover:bg-white hover:text-black"
               >
                 Meet Our Players
               </Link>
             </div>
-          </div>
-        </Container>
+            </div>
+          </Container>
+        </div>
       </section>
-
-      {/* Services Section */}
-      <section className="py-16 sm:py-24">
+      {/* ───── Locations ───── */}
+      <section className="bg-black/5 py-16 sm:py-24">
         <Container>
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-              Our Services
+          <div className=" flex flex-col items-center justify-center mx-auto mb-10 max-w-2xl text-center">
+            <h2 className="text-2xl font-bold uppercase italic tracking-tight text-black sm:text-3xl">
+              Our Facilities
             </h2>
-            <p className="mt-4 text-lg text-zinc-600 dark:text-zinc-400">
-              Professional tennis training for all ages and skill levels.
+            <p className="mt-3 text-base text-black/50">
+              Two premier tennis centres in the heart of Kathmandu Valley.
             </p>
           </div>
 
-          <div className="mx-auto mt-12 grid max-w-4xl gap-8 sm:grid-cols-2">
-            {services.map((service) => (
-              <div
-                key={service.id}
-                className="rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm transition-shadow hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900"
-              >
-                <span className="inline-block rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
-                  {service.category === 'adults' ? 'Adults' : 'Kids'}
-                </span>
-                <h3 className="mt-4 text-xl font-semibold text-zinc-900 dark:text-zinc-50">
-                  {service.name}
-                </h3>
-                <div className="mt-4 flex items-baseline gap-1">
-                  <span className="text-3xl font-bold text-emerald-600">
-                    NPR {service.price?.toLocaleString()}
-                  </span>
-                  <span className="text-sm text-zinc-500 dark:text-zinc-400">
-                    / {service.pricingUnit}
-                  </span>
-                </div>
-                <p className="mt-3 text-sm text-zinc-600 dark:text-zinc-400">
-                  {service.timing === 'morning' ? 'Morning' : 'Evening'} sessions
-                </p>
-              </div>
-            ))}
-          </div>
-        </Container>
-      </section>
-
-      {/* Locations Section */}
-      <section className="bg-zinc-50 py-16 sm:py-24 dark:bg-zinc-900/50">
-        <Container>
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-              Our Locations
-            </h2>
-            <p className="mt-4 text-lg text-zinc-600 dark:text-zinc-400">
-              Two premier facilities in the Kathmandu Valley.
-            </p>
-          </div>
-
-          <div className="mx-auto mt-12 grid max-w-4xl gap-8 sm:grid-cols-2">
+          <div className="mx-auto grid max-w-5xl gap-8 sm:grid-cols-2">
             {locations.map((location) => {
-              const courtSummary = (location.courts as Array<{ courtType: string }>) || [];
-              const clayCourts = courtSummary.filter((c) => c.courtType === 'clay').length;
-              const miniCourts = courtSummary.filter((c) => c.courtType === 'mini').length;
+              const courts = (location.courts as Array<{ courtType: string }>) || [];
+              const clayCourts = courts.filter((c) => c.courtType === 'clay').length;
+              const miniCourts = courts.filter((c) => c.courtType === 'mini').length;
+
+              const thumbUrl =
+                location.thumbnail &&
+                typeof location.thumbnail === 'object' &&
+                'url' in location.thumbnail
+                  ? (location.thumbnail.url as string)
+                  : null;
 
               return (
                 <div
                   key={location.id}
-                  className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
+                  className="group overflow-hidden border border-black/10 bg-white shadow-sm transition-shadow hover:shadow-lg"
                 >
-                  {location.thumbnail &&
-                    typeof location.thumbnail === 'object' &&
-                    'url' in location.thumbnail &&
-                    location.thumbnail.url && (
-                      <div className="aspect-video w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800">
-                        <img
-                          src={location.thumbnail.url as string}
-                          alt={String((location.thumbnail as Record<string, unknown>).alt || location.name)}
-                          className="h-full w-full object-cover"
-                        />
+                  <div className="relative h-56 w-full overflow-hidden bg-black/5">
+                    {thumbUrl ? (
+                      <img
+                        src={thumbUrl}
+                        alt={String(
+                          (location.thumbnail as Record<string, unknown>)?.alt || location.name,
+                        )}
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="flex h-full items-center justify-center text-black/30">
+                        No image
                       </div>
                     )}
-                  <div className="p-6">
-                    <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">
-                      {location.name}
-                    </h3>
-                    <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
-                      {location.address}
-                    </p>
-                    <div className="mt-4 flex gap-4">
+                    <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
+                    <div className="absolute bottom-4 left-5">
+                      <h3 className="text-xl font-extrabold uppercase italic text-white">
+                        {location.name}
+                      </h3>
+                    </div>
+                  </div>
+                  <div className="p-5">
+                    <p className="text-sm text-black/50">{location.address}</p>
+                    <div className="mt-4 flex flex-wrap gap-2">
                       {clayCourts > 0 && (
-                        <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-800 dark:bg-amber-900/30 dark:text-amber-400">
+                        <span className="bg-primary/20 px-3 py-1 text-xs font-medium text-black">
                           {clayCourts} Clay Court{clayCourts > 1 ? 's' : ''}
                         </span>
                       )}
                       {miniCourts > 0 && (
-                        <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+                        <span className="bg-black/10 px-3 py-1 text-xs font-medium text-black">
                           {miniCourts} Mini Court{miniCourts > 1 ? 's' : ''}
                         </span>
                       )}
@@ -152,22 +254,105 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-16 sm:py-24">
-        <Container>
-          <div className="mx-auto max-w-2xl rounded-2xl bg-emerald-700 px-8 py-12 text-center text-white shadow-xl sm:px-16">
-            <h2 className="text-3xl font-bold tracking-tight">
-              Ready to Start Playing?
+      {/* ───── Upcoming Events ───── */}
+      {events.length > 0 && (
+        <section className="bg-white py-16 sm:py-24">
+          <Container>
+            <h2 className="mb-8 px-1 text-2xl font-bold uppercase italic tracking-tight text-black sm:text-3xl">
+              Upcoming Events
             </h2>
-            <p className="mt-4 text-lg text-emerald-100">
-              Book your free introductory lesson today and experience world-class
-              tennis coaching in Kathmandu.
-            </p>
+
+            <div className="flex gap-5 overflow-x-auto pb-4 no-scrollbar sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-3">
+              {events.map((event) => {
+                const coverUrl =
+                  event.thumbnail &&
+                  typeof event.thumbnail === 'object' &&
+                  'url' in event.thumbnail
+                    ? (event.thumbnail.url as string)
+                    : null;
+
+                const startDate = event.startDate
+                  ? new Date(event.startDate as string)
+                  : null;
+
+                return (
+                  <div
+                    key={event.id}
+                    className="w-[80%] shrink-0 snap-center overflow-hidden border border-black/10 bg-white shadow-sm transition-shadow hover:shadow-lg sm:w-auto"
+                  >
+                    <div className="relative h-40 w-full overflow-hidden bg-black/5">
+                      {coverUrl ? (
+                        <img
+                          src={coverUrl}
+                          alt={event.title}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-full items-center justify-center bg-primary/10">
+                          <svg className="h-10 w-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-5">
+                      {startDate && (
+                        <div className="mb-2 flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-black/50">
+                          <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                          {startDate.toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric',
+                          })}
+                          {event.timing && ` · ${event.timing}`}
+                        </div>
+                      )}
+                      <h3 className="text-base font-bold leading-snug text-black">
+                        {event.title}
+                      </h3>
+                      {event.location &&
+                        typeof event.location === 'object' &&
+                        'name' in event.location && (
+                          <p className="mt-1 text-xs italic text-black/40">
+                            {(event.location as Record<string, unknown>).name as string}
+                          </p>
+                        )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </Container>
+        </section>
+      )}
+
+      {/* ───── CTA ───── */}
+      <section className="bg-black py-20 sm:py-28">
+        <Container className="text-center">
+          <h2 className="text-3xl font-extrabold uppercase italic tracking-tight text-white sm:text-4xl">
+            Ready to Hit the Court?
+          </h2>
+          <p className="mx-auto mt-4 max-w-lg text-lg text-white/60">
+            Book your free introductory lesson today and experience world-class
+            tennis coaching in Kathmandu.
+          </p>
+          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link
               href="/availability"
-              className="mt-8 inline-block rounded-full bg-white px-8 py-3 text-sm font-semibold text-emerald-700 shadow-sm transition-colors hover:bg-emerald-50"
+              className="inline-flex items-center gap-2 bg-primary px-10 py-4 text-sm font-bold uppercase tracking-wide text-black transition-colors hover:bg-primary-dark"
             >
               Book Your Free Lesson
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </Link>
+            <Link
+              href="/players"
+              className="inline-flex items-center border-2 border-white px-10 py-4 text-sm font-semibold text-white transition-colors hover:bg-white hover:text-black"
+            >
+              Meet Our Players
             </Link>
           </div>
         </Container>

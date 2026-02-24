@@ -1,403 +1,318 @@
-Flash Sports Academy -- Full Build Plan (Revised)
-
-Phase 0: Switch from Bun to Yarn
-
-The project currently uses Bun (bun.lock exists). Migrate to Yarn.
-
-
-
-
-
-Delete bun.lock
-
-
-
-Run yarn install to generate yarn.lock
-
-
-
-Update README.md to reference yarn commands
-
-
-
-All subsequent commands: yarn dev, yarn build, etc.
-
-Phase 1: Foundation -- Environment and Database
-
-
-
-
-
-Start Postgres via Docker: docker compose up -d
-
-
-
-Create .env in project root with DATABASE_URL and PAYLOAD_SECRET
-
-
-
-Run yarn dev, verify Payload Admin at http://localhost:3000/admin
-
-
-
-Create an admin user through the Payload registration screen
-
-Phase 2: Payload CMS Collections (Strictly Typed)
-
-All collections under src/payload/collections/, each in its own folder with index.ts. Every collection, field, relationship, and filter must be strictly typed -- no any.
-
-erDiagram
-    Media {
-        string alt
-        upload file
-    }
-    Locations ||--o{ Events : hosts
-    Locations {
-        string name
-        string slug
-        text address
-        richText description
-        upload thumbnail
-        array gallery
-        array courts
-    }
-    Courts_nested["Courts (nested in Location)"] {
-        select courtType
-        text timing
-        number availableSlots
-        select level
-    }
-    Locations ||--|{ Courts_nested : contains
-    Players {
-        string name
-        string slug
-        number age
-        date birthday
-        upload profileImage
-        richText achievements
-    }
-    Services {
-        string name
-        string slug
-        select category
-        number price
-        select pricingUnit
-        select timing
-        richText description
-    }
-    Events {
-        string title
-        string slug
-        richText description
-        date startDate
-        date endDate
-        text timing
-        array images
-        relationship location
-    }
-    Players }o--|| Media : profileImage
-    Locations }o--|| Media : thumbnail
-    Events }o--|| Locations : location
-
-a) Media -- src/payload/collections/Media/index.ts
-
-
-
-
-
-upload collection for images (used by Players, Locations, Events)
-
-
-
-Fields: alt (text, required)
-
-
-
-Configure staticDir and allowed mimeTypes for images
-
-b) Locations -- src/payload/collections/Locations/index.ts
-
-This is the most complex collection. Courts are nested as an array field inside Location.
-
-
-
-
-
-Top-level fields: name, slug, address, description (richText)
-
-
-
-Image fields:
-
-
-
-
-
-thumbnail -- single upload relationship to Media (for preview cards)
-
-
-
-gallery -- array field, each row has an image upload to Media (for detail pages)
-
-
-
-Courts -- array field named courts, each row contains:
-
-
-
-
-
-courtType -- select, options: clay | mini (extensible for future types)
-
-
-
-timing -- text (e.g. "6:00 AM - 10:00 AM")
-
-
-
-availableSlots -- number (required, min 0)
-
-
-
-level -- select, options: beginner | intermediate | advanced | all
-
-
-
-Seed data: Baluwatar (2 clay courts + 1 mini court entries), Budhanilkantha (4 clay court entries)
-
-Strict types for the courts array:
-
-type CourtType = 'clay' | 'mini';
-type CourtLevel = 'beginner' | 'intermediate' | 'advanced' | 'all';
-
-interface Court {
-    courtType: CourtType;
-    timing: string;
-    availableSlots: number;
-    level: CourtLevel;
-}
-
-c) Players -- src/payload/collections/Players/index.ts
-
-Key change: age is a stored number field (not just a virtual/computed field) to support efficient range queries and filtering.
-
-
-
-
-
-Fields: name, slug, birthday (date, required), age (number, required, indexed, admin read-only), profileImage (upload to Media), achievements (richText)
-
-
-
-**beforeChange hook: Auto-computes age from birthday on every create/update, so age is always in sync
-
-
-
-Filtering: age field supports direct Payload where queries like { age: { greater_than_equal: 10, less_than_equal: 18 } }
-
-
-
-Age field is set to admin: { readOnly: true } so editors cannot manually set it
-
-// beforeChange hook logic
-const calculateAge = (birthday: string): number => {
-    const birth = new Date(birthday);
-    const today = new Date();
-    let age = today.getFullYear() - birth.getFullYear();
-    const monthDiff = today.getMonth() - birth.getMonth();
-    if (
-        monthDiff < 0 ||
-        (monthDiff === 0 && today.getDate() < birth.getDate())
-    ) {
-        age--;
-    }
-    return age;
-};
-
-d) Services -- src/payload/collections/Services/index.ts
-
-
-
-
-
-Fields: name, slug, category (select: adults | kids), price (number, required), pricingUnit (select: month | hour), timing (select: morning | evening), description (richText)
-
-
-
-Business logic: Adults = NPR 12,000/month (morning), Kids = NPR 1,000/hour (evening)
-
-e) Events -- src/payload/collections/Events/index.ts
-
-
-
-
-
-Fields: title, slug, description (richText), startDate (date), endDate (date), timing (text), images (array of uploads to Media), location (relationship to Locations)
-
-After creating all collections:
-
-
-
-
-
-Update collections/index.ts to export all collections
-
-
-
-Update payload.config.ts: collections: [Users, Media, Locations, Players, Services, Events]
-
-
-
-Add "generate:types": "payload generate:types" to package.json scripts
-
-
-
-Run yarn dev (auto-migrates DB), then yarn generate:types to produce payload-types.ts
-
-Phase 3: Frontend Pages
-
-All pages under src/app/(frontend)/. Data fetching via Payload Local API (getPayload) in Server Components.
-
-flowchart TD
-    subgraph layout [Root Layout]
-        Nav[Navbar]
-        Footer[Footer]
-    end
-    Nav --> Home["/"]
-    Nav --> Avail["/availability"]
-    Nav --> PlayerDir["/players"]
-
-    Home --> Hero[Hero Section]
-    Home --> SvcOverview[Services Cards]
-    Home --> LocPreview["Locations with Thumbnails"]
-    Home --> CTA["Book Free Lesson CTA"]
-
-    Avail --> LocSelector["Location Selector"]
-    LocSelector --> CourtTable["Dynamic Court Table"]
-    CourtTable --> Cols["Type | Timing | Slots | Level"]
-
-    PlayerDir --> AgeFilter["Age Range Filter"]
-    AgeFilter --> PlayerGrid["Player Cards Grid"]
-
-Shared Components -- src/components/
-
-
-
-
-
-Navbar -- Logo, nav links (Home, Availability, Players), social icons
-
-
-
-Footer -- Social links (Instagram, Facebook), copyright
-
-
-
-Container -- Max-width wrapper
-
-a) Home Page -- src/app/(frontend)/page.tsx
-
-
-
-
-
-Hero Section -- Bold headline, "Book Your Free Lesson" CTA
-
-
-
-Services Overview -- Fetch Services, display pricing cards
-
-
-
-Locations Preview -- Cards with thumbnail image, name, court count summary
-
-
-
-CTA Section -- Contact / booking call-to-action
-
-b) Availability Page -- src/app/(frontend)/availability/page.tsx
-
-
-
-
-
-Fetch all Locations (with nested courts array populated)
-
-
-
-Location selector (tabs or dropdown) to pick a location
-
-
-
-Dynamic court table renders from the selected Location's courts array:
-
-
-
-
-
-Columns: Court Type | Timing | Available Slots | Level
-
-
-
-Rows: one per court entry in the nested array
-
-
-
-Displays both clay and mini courts
-
-
-
-Strictly typed: timing, slots, and level values match the collection schema
-
-
-
-Location selector requires a small client component; table can be server-rendered per selection via search params or client-side filtering
-
-
-
-Responsive: horizontal scroll wrapper on mobile
-
-c) Player Directory -- src/app/(frontend)/players/page.tsx
-
-
-
-
-
-Fetch Players from Payload (depth: 1 to populate profileImage)
-
-
-
-Age range filter -- uses Payload where query on the stored age field for efficient filtering (e.g. ?minAge=10&maxAge=18 as search params)
-
-
-
-Display player cards in a responsive grid: name, age, profile image, achievements
-
-
-
-Filter controls: min/max age inputs (client component), triggers re-fetch via search params
-
-Phase 4: Polish and Demo Prep
-
-
-
-
-
-Responsive design pass on all pages (mobile-first Tailwind)
-
-
-
-Loading states and error boundaries
-
-
-
-Seed CMS data via Payload Admin (2 locations with courts, 3-5 players, 2 services, 1-2 events)
-
-
-
-Final README update
-
-
-
-Verify demo flow: Home -> Availability (switch locations, see court tables) -> Players (filter by age) -> Admin panel
-
+# Flash Sports Academy — Project Instructions
+
+> Nepal's premier tennis training academy with locations in Baluwatar and Budhanilkantha.
+
+---
+
+## Tech Stack
+
+| Layer           | Technology                                          |
+| --------------- | --------------------------------------------------- |
+| Framework       | Next.js 16 (App Router, Server Components)          |
+| CMS / Backend   | Payload CMS 3.77 (Local API, PostgreSQL)            |
+| Database        | PostgreSQL (via `@payloadcms/db-postgres`)           |
+| Rich Text       | Lexical (`@payloadcms/richtext-lexical`)             |
+| Styling         | Tailwind CSS v4 (CSS-based theme, no config file)   |
+| Auth            | Payload built-in auth, cookie-based sessions        |
+| Email           | Nodemailer                                           |
+| Icons           | `react-icons` (`IoIosFlash` for logo)               |
+| Image Processing| Sharp                                                |
+| Language        | TypeScript (strict mode)                             |
+| Package Manager | Yarn                                                 |
+
+---
+
+## Design System
+
+### Color Palette
+
+Only three colors are used across the entire application:
+
+| Token            | Value     | Usage                                    |
+| ---------------- | --------- | ---------------------------------------- |
+| `primary`        | `#aed639` | Accents, active states, CTAs, highlights |
+| `primary-dark`   | `#96b830` | Hover states on primary backgrounds      |
+| `black`          | `#000000` | Text, borders (`black/10`, `black/50`)   |
+| `white`          | `#ffffff` | Backgrounds, button text on dark buttons |
+
+**Rules:**
+- Never use Tailwind built-in colors like `emerald-*`, `zinc-*`, `blue-*`, `gray-*`, etc.
+- Use opacity modifiers for subtle tones: `text-black/60`, `border-black/10`, `bg-black/5`.
+- Buttons: `bg-black text-white` with `hover:bg-primary hover:text-black`.
+- Focus rings: `focus:border-primary focus:ring-2 focus:ring-primary/20`.
+- Success messages: `bg-primary/20 text-black`. Error messages: `bg-red-50 text-red-700`.
+
+### Typography
+
+| Font             | CSS Variable      | Tailwind Class  | Usage                          |
+| ---------------- | ------------------ | --------------- | ------------------------------ |
+| Barlow Condensed | `--font-heading`   | `font-heading`  | Headings, navbar, tabs, labels |
+| Rubik 400        | `--font-body`      | `font-body`     | Body text, paragraphs, inputs  |
+
+Fonts are imported via Google Fonts in `globals.css`. The `body` element defaults to `font-body`; all `h1`–`h6` elements default to `font-heading`.
+
+### Animations
+
+Defined in `globals.css`:
+- `animate-fade-in-up` — fade + slide up (0.6s)
+- `animate-fade-in` — simple fade (0.5s)
+- `animate-scale-in` — scale from 0.96 (0.5s)
+- `animate-on-scroll` + `.is-visible` — Intersection Observer scroll reveal
+
+---
+
+## Directory Structure
+
+```
+src/
+├── app/
+│   ├── (frontend)/          # Public-facing pages
+│   │   ├── globals.css      # Theme tokens, fonts, animations
+│   │   ├── layout.tsx       # Navbar + Footer wrapper
+│   │   ├── page.tsx         # Home page
+│   │   ├── availability/    # Slot booking page
+│   │   │   ├── page.tsx
+│   │   │   └── SlotBooking.tsx
+│   │   └── players/
+│   │       └── page.tsx     # Player directory with age filter
+│   │
+│   ├── (auth)/              # Authentication pages
+│   │   ├── layout.tsx       # Centered card layout
+│   │   ├── login/
+│   │   │   ├── page.tsx
+│   │   │   └── LoginForm.tsx
+│   │   └── register/
+│   │       ├── page.tsx
+│   │       └── RegisterForm.tsx
+│   │
+│   ├── (admin-portal)/      # Admin dashboard (role: admin)
+│   │   ├── layout.tsx       # PortalNav sidebar + auth guard
+│   │   └── admin-portal/
+│   │       ├── page.tsx            # Dashboard with stats
+│   │       ├── bookings/page.tsx   # Booking management
+│   │       ├── players/            # CRUD: list, new, [id]/edit
+│   │       ├── locations/          # CRUD: list, new, [id]/edit
+│   │       ├── services/           # CRUD: list, new, [id]/edit
+│   │       └── events/             # CRUD: list, new, [id]/edit
+│   │
+│   ├── (user-portal)/       # User dashboard (role: user)
+│   │   ├── layout.tsx       # PortalNav sidebar + auth guard
+│   │   └── dashboard/
+│   │       └── page.tsx     # Booking form, pricing, locations
+│   │
+│   └── (payload)/           # Payload CMS admin panel
+│       └── admin/[[...segments]]/
+│
+├── components/
+│   ├── Navbar.tsx           # Sticky top nav with active link highlighting
+│   ├── Footer.tsx           # Social links (Instagram, Facebook), copyright
+│   ├── Container.tsx        # Max-width wrapper component
+│   ├── PortalNav.tsx        # Sidebar nav for admin/user portals
+│   ├── AnimateInView.tsx    # Intersection Observer scroll animation wrapper
+│   ├── BookingForm.tsx      # Court booking form (email-based via nodemailer)
+│   └── admin/
+│       ├── PlayerForm.tsx   # Create/edit player with profile image
+│       ├── LocationForm.tsx # Create/edit location with courts array
+│       ├── ServiceForm.tsx  # Create/edit service with thumbnail
+│       ├── EventForm.tsx    # Create/edit event with images
+│       └── DeleteButton.tsx # Confirmation-based delete button
+│
+├── lib/
+│   ├── auth.ts              # getCurrentUser() — reads Payload session from cookies
+│   ├── access.ts            # Access control: isAdmin, isPublicRead, isAdminOrLoggedIn, isAdminFieldAccess
+│   └── actions/
+│       ├── auth.ts          # loginAction, registerAction, logoutAction
+│       ├── booking.ts       # submitBookingAction (email via nodemailer)
+│       ├── crud.ts          # CRUD server actions for all collections
+│       └── slot-booking.ts  # bookSlotAction, getBookingsForDate
+│
+└── payload/
+    ├── payload.config.ts    # Payload config: collections, DB, editor, sharp
+    ├── payload-types.ts     # Auto-generated types (yarn generate:types)
+    ├── fields/
+    │   └── defaultLexical.ts
+    └── collections/
+        ├── index.ts         # Barrel export for all collections
+        ├── Users/index.ts
+        ├── Media/index.ts
+        ├── Locations/index.ts
+        ├── Players/index.ts
+        ├── Services/index.ts
+        ├── Events/index.ts
+        └── Bookings/index.ts
+```
+
+---
+
+## Payload CMS Collections
+
+### Users
+- **Fields:** `name` (text), `role` (select: `user` | `admin`)
+- **Auth:** Built-in Payload auth (email + password)
+- **Access:** Public create, admin/self read+update, admin delete
+
+### Media
+- **Fields:** `alt` (text)
+- **Upload:** Static dir `media`, image MIME types only
+- **Access:** Public read, admin write
+
+### Locations
+- **Fields:** `name`, `slug`, `address`, `description` (richText), `thumbnail` (upload → Media), `gallery` (array of images)
+- **Nested Array — `courts`:**
+  - `courtType` (select: `clay` | `mini`)
+  - `timing` (text, e.g. "6:00 AM - 10:00 AM")
+  - `availableSlots` (number, min 0)
+  - `level` (select: `beginner` | `intermediate` | `advanced` | `all`)
+- **Access:** Public read, admin write
+- **Seed Data:** Baluwatar (2 clay + 1 mini), Budhanilkantha (4 clay)
+
+### Players
+- **Fields:** `name`, `slug`, `birthday` (date), `age` (number, auto-computed, read-only), `profileImage` (upload → Media), `achievements` (richText)
+- **Hook:** `beforeChange` calculates `age` from `birthday` on every create/update
+- **Access:** Public read, admin write
+
+### Services
+- **Fields:** `name`, `slug`, `category` (select: `adults` | `kids`), `price` (number), `pricingUnit` (select: `month` | `hour`), `timing` (select: `morning` | `evening`), `thumbnail` (upload → Media), `description` (richText)
+- **Access:** Public read, admin write
+
+### Events
+- **Fields:** `title`, `slug`, `description` (richText), `startDate`, `endDate`, `timing`, `thumbnail` (upload → Media), `images` (array of uploads), `location` (relationship → Locations)
+- **Access:** Public read, admin write
+
+### Bookings
+- **Fields:** `user` (relationship → Users), `userName`, `userEmail`, `location` (relationship → Locations), `courtType` (select: `clay` | `mini`), `date`, `timeSlot`, `status` (select: `confirmed` | `cancelled`)
+- **Access:** Admin/owner read, logged-in create, admin update/delete
+
+---
+
+## Authentication & Access Control
+
+**Session management:** Payload's built-in cookie-based auth. The `getCurrentUser()` function in `src/lib/auth.ts` reads session headers and returns an `AuthUser` object (`id`, `email`, `name`, `role`).
+
+**Roles:** `user` and `admin`.
+
+**Access functions** (`src/lib/access.ts`):
+- `isAdmin` — allows only admin role
+- `isAdminOrLoggedIn` — allows any authenticated user
+- `isPublicRead` — always returns `true` (public GET)
+- `isAdminFieldAccess` — admin-only field-level access
+
+**Route protection:**
+- `(admin-portal)/layout.tsx` redirects non-admin users to `/login`
+- `(user-portal)/layout.tsx` redirects unauthenticated users to `/login`
+- Server actions check `req.user` before mutations
+
+---
+
+## Server Actions
+
+### Auth (`src/lib/actions/auth.ts`)
+- `loginAction(formData)` — authenticates user, sets cookie, redirects by role
+- `registerAction(formData)` — creates user, auto-logs in
+- `logoutAction()` — clears session cookie, redirects to `/login`
+
+### Booking (`src/lib/actions/booking.ts`)
+- `submitBookingAction(formData)` — sends booking request email via nodemailer
+
+### Slot Booking (`src/lib/actions/slot-booking.ts`)
+- `bookSlotAction(formData)` — validates availability, creates Booking record, revalidates `/availability`
+- `getBookingsForDate(locationId, date)` — returns `Record<string, number>` of booking counts per `courtType::timeSlot` key
+
+### CRUD (`src/lib/actions/crud.ts`)
+- `deleteDocument(collection, id)` — generic delete
+- `createPlayer / updatePlayer` — with image upload
+- `createLocation / updateLocation` — with dynamic courts array
+- `createService / updateService` — with thumbnail upload
+- `createEvent / updateEvent` — with thumbnail + images array
+
+---
+
+## Frontend Pages
+
+### Home (`/`)
+Server Component. Fetches locations, services, events, players via Payload Local API. Sections: Hero, Services overview, Locations preview, Events, Players showcase, CTA.
+
+### Availability (`/availability`)
+Server Component page + `SlotBooking` client component. Users select a location (tabs), pick a date, and see a grid of time slots per court type. Each slot shows remaining availability. Logged-in users can book directly. Booking counts refresh after each action.
+
+**Time slots:** 6–10 AM and 3–7 PM (1-hour blocks).
+
+### Players (`/players`)
+Server Component with age range filter via search params. Fetches players with `where` queries on the `age` field. Renders player cards in a responsive grid.
+
+### Login / Register (`/login`, `/register`)
+Client component forms using `useActionState`. Centered card layout on light background.
+
+### Admin Portal (`/admin-portal/*`)
+Protected by admin role. Dashboard with stats, plus CRUD pages for Players, Locations, Services, Events, and a Bookings list.
+
+### User Dashboard (`/dashboard`)
+Protected by auth. Booking form (email-based), pricing cards, location info.
+
+---
+
+## Component Patterns
+
+### Navbar (`src/components/Navbar.tsx`)
+- Client component (`usePathname` for active link detection)
+- Logo: `IoIosFlash` icon + "Flash Sports Academy" text
+- Desktop: horizontal nav links + social icons + auth button
+- Mobile: hamburger menu with slide-down panel
+- Active link: `text-primary`, inactive: `text-black/60`
+- All nav items use `font-heading text-sm font-semibold uppercase`
+
+### PortalNav (`src/components/PortalNav.tsx`)
+- Client component, sidebar layout (w-64)
+- Admin: grouped links (Overview, Manage, Other)
+- User: flat link list
+- Logo matches Navbar style
+- User avatar: first letter of name in `bg-primary/20` circle
+- Sign out button at bottom
+
+### Admin Forms
+- Located in `src/components/admin/`
+- All use server actions from `src/lib/actions/crud.ts`
+- Image uploads handled via FormData
+- Location form includes dynamic courts array management
+
+---
+
+## Environment Variables
+
+```
+DATABASE_URL=        # PostgreSQL connection string
+PAYLOAD_SECRET=      # Payload CMS secret key
+SMTP_HOST=           # SMTP server host
+SMTP_PORT=           # SMTP port
+SMTP_USER=           # SMTP username
+SMTP_PASS=           # SMTP password
+BOOKING_EMAIL=       # Email address for booking notifications
+```
+
+---
+
+## Scripts
+
+```bash
+yarn dev              # Start development server
+yarn build            # Production build
+yarn start            # Start production server
+yarn lint             # ESLint
+yarn generate:types   # Regenerate Payload types (payload-types.ts)
+yarn generate:importmap  # Regenerate Payload import map
+```
+
+---
+
+## Coding Conventions
+
+1. **TypeScript strict** — no `any`. All collections, fields, and queries are strictly typed.
+2. **Server Components by default** — only add `'use client'` when state or browser APIs are needed.
+3. **Data fetching** — always use Payload Local API (`getPayload({ config })`) in Server Components. Never call REST API from the server.
+4. **Path alias** — `@/` maps to `src/`.
+5. **Tailwind only** — no CSS modules, no inline styles. All styling via Tailwind utility classes using the defined color palette.
+6. **Font usage** — `font-heading` for headings/nav/tabs/labels, default `font-body` for everything else.
+7. **Buttons** — `bg-black text-white hover:bg-primary hover:text-black` for primary actions. `border border-black/20 text-black/70 hover:bg-black/5` for secondary.
+8. **Forms** — inputs use `border-black/20 focus:border-primary focus:ring-2 focus:ring-primary/20`.
+9. **Access control** — every collection must define `access` using functions from `src/lib/access.ts`.
+10. **Server actions** — all mutations go through `src/lib/actions/`. Use `revalidatePath` after writes.

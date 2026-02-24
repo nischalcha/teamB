@@ -15,17 +15,17 @@ export default async function LoginPage() {
 
   return (
     <div className="w-full max-w-md px-4">
-      <div className="rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="rounded-2xl border border-black/10 bg-white p-8 shadow-sm">
         <div className="mb-8 text-center">
-          <h1 className="text-2xl font-bold text-emerald-600">Flash Sports</h1>
-          <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
+          <h1 className="text-2xl font-bold text-primary">Flash Sports</h1>
+          <p className="mt-2 text-sm text-black/50">
             Sign in to your account
           </p>
         </div>
         <LoginForm />
-        <p className="mt-6 text-center text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="mt-6 text-center text-sm text-black/50">
           Don&apos;t have an account?{' '}
-          <Link href="/register" className="font-medium text-emerald-600 hover:text-emerald-500">
+          <Link href="/register" className="font-medium text-black hover:text-primary">
             Register
           </Link>
         </p>

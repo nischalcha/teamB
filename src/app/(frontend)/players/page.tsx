@@ -61,20 +61,18 @@ export default async function PlayersPage({ searchParams }: PageProps) {
   });
 
   return (
-    <section className="py-16 sm:py-24">
+    <section className="py-16 sm:py-12">
       <Container>
         <div className="mx-auto max-w-2xl text-center">
-          <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-            Player Directory
+          <h1 className="text-3xl font-bold tracking-tight text-zinc-900 uppercase">
+            Players
           </h1>
           <p className="mt-4 text-lg text-zinc-600 dark:text-zinc-400">
             Meet the talented athletes training at Flash Sports Academy.
           </p>
         </div>
 
-        <div className="mx-auto mt-8 max-w-4xl">
-          <AgeFilter currentMin={minAge} currentMax={maxAge} />
-        </div>
+        
 
         <div className="mx-auto mt-12 grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {players.length === 0 ? (

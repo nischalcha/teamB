@@ -13,13 +13,27 @@ export default async function EditEventPage({ params }: PageProps) {
   const payload = await getPayload({ config });
 
   try {
-    const event = await payload.findByID({ collection: 'events', id, depth: 0 });
+    const event = await payload.findByID({ collection: 'events', id, depth: 1 });
     const { docs: locations } = await payload.find({ collection: 'locations', limit: 100, depth: 0 });
+
+    const thumbnail = event.thumbnail && typeof event.thumbnail === 'object'
+      ? { id: event.thumbnail.id, url: event.thumbnail.url! }
+      : null;
+
+    const images = (event.images ?? [])
+      .map((item) => {
+        const img = item.image;
+        if (img && typeof img === 'object') {
+          return { id: img.id, url: img.url! };
+        }
+        return null;
+      })
+      .filter((x): x is { id: number; url: string } => x !== null);
 
     return (
       <div className="p-6 lg:p-10">
-        <Link href="/admin-portal/events" className="text-sm text-emerald-600 hover:text-emerald-500">&larr; Back to Events</Link>
-        <h1 className="mt-4 text-2xl font-bold text-zinc-900 dark:text-zinc-50">Edit Event</h1>
+        <Link href="/admin-portal/events" className="text-sm text-black hover:text-primary">&larr; Back to Events</Link>
+        <h1 className="mt-4 text-2xl font-bold text-black">Edit Event</h1>
         <div className="mt-6">
           <EventForm
             locations={locations.map((l) => ({ id: l.id, name: l.name }))}
@@ -30,7 +44,9 @@ export default async function EditEventPage({ params }: PageProps) {
               startDate: event.startDate,
               endDate: event.endDate,
               timing: event.timing || '',
-              location: event.location as number,
+              location: typeof event.location === 'object' ? event.location.id : (event.location as number),
+              thumbnail,
+              images,
             }}
           />
         </div>

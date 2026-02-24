@@ -1,7 +1,9 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useState } from 'react';
+import { IoIosFlash } from 'react-icons/io';
 import { Container } from './Container';
 
 interface NavbarProps {
@@ -10,20 +12,25 @@ interface NavbarProps {
 
 const NAV_LINKS = [
   { href: '/', label: 'Home' },
-  { href: '/availability', label: 'Availability' },
+  { href: '/availability', label: 'Book Now' },
   { href: '/players', label: 'Players' },
 ] as const;
 
 export function Navbar({ user }: NavbarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const pathname = usePathname();
 
   const portalHref = user?.role === 'admin' ? '/admin-portal' : '/dashboard';
 
+  const isActive = (href: string) =>
+    href === '/' ? pathname === '/' : pathname.startsWith(href);
+
   return (
-    <header className="sticky top-0 z-50 border-b border-zinc-200 bg-white/80 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-950/80">
+    <header className="sticky top-0 z-50 border-b border-black/10 bg-white/80 backdrop-blur-md">
       <Container className="flex h-16 items-center justify-between">
-        <Link href="/" className="text-xl font-bold tracking-tight text-emerald-600">
-          Flash Sports
+        <Link href="/" className="flex items-center gap-1.5 font-heading text-xl font-extrabold uppercase italic tracking-tight text-black">
+          <IoIosFlash className="h-7 w-7 text-primary" />
+          Flash Sports Academy
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
@@ -31,7 +38,9 @@ export function Navbar({ user }: NavbarProps) {
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-zinc-600 transition-colors hover:text-emerald-600 dark:text-zinc-400 dark:hover:text-emerald-400"
+              className={`font-heading text-sm font-semibold uppercase transition-colors hover:text-primary ${
+                isActive(link.href) ? 'text-primary' : 'text-black/60'
+              }`}
             >
               {link.label}
             </Link>
@@ -42,7 +51,7 @@ export function Navbar({ user }: NavbarProps) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Instagram"
-              className="text-zinc-500 transition-colors hover:text-emerald-600"
+              className="text-black/40 transition-colors hover:text-black"
             >
               <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
@@ -53,7 +62,7 @@ export function Navbar({ user }: NavbarProps) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Facebook"
-              className="text-zinc-500 transition-colors hover:text-emerald-600"
+              className="text-black/40 transition-colors hover:text-black"
             >
               <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
@@ -62,14 +71,14 @@ export function Navbar({ user }: NavbarProps) {
             {user ? (
               <Link
                 href={portalHref}
-                className="ml-2 rounded-full bg-emerald-600 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-emerald-700"
+                className="ml-2 bg-black rounded-full px-4 py-1.5 font-heading text-sm font-semibold uppercase text-white transition-colors hover:bg-primary hover:text-black"
               >
                 {user.role === 'admin' ? 'Admin Portal' : 'Dashboard'}
               </Link>
             ) : (
               <Link
                 href="/login"
-                className="ml-2 rounded-full bg-emerald-600 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-emerald-700"
+                className="ml-2 rounded-full bg-black px-4 py-1.5 font-heading text-sm font-semibold uppercase text-white transition-colors hover:bg-primary hover:text-black"
               >
                 Sign In
               </Link>
@@ -79,7 +88,7 @@ export function Navbar({ user }: NavbarProps) {
 
         <button
           type="button"
-          className="rounded-md p-2 text-zinc-600 md:hidden dark:text-zinc-400"
+          className="rounded-md p-2 text-black/60 md:hidden"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
         >
@@ -94,13 +103,15 @@ export function Navbar({ user }: NavbarProps) {
       </Container>
 
       {mobileOpen && (
-        <div className="border-t border-zinc-200 bg-white md:hidden dark:border-zinc-800 dark:bg-zinc-950">
+        <div className="border-t border-black/10 bg-white md:hidden">
           <Container className="flex flex-col gap-4 py-4">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-sm font-medium text-zinc-600 dark:text-zinc-400"
+                className={`font-heading text-sm font-semibold uppercase ${
+                  isActive(link.href) ? 'text-primary' : 'text-black/70'
+                }`}
                 onClick={() => setMobileOpen(false)}
               >
                 {link.label}
@@ -109,7 +120,7 @@ export function Navbar({ user }: NavbarProps) {
             {user ? (
               <Link
                 href={portalHref}
-                className="text-sm font-medium text-emerald-600"
+                className="text-sm font-bold text-black"
                 onClick={() => setMobileOpen(false)}
               >
                 {user.role === 'admin' ? 'Admin Portal' : 'Dashboard'}
@@ -117,7 +128,7 @@ export function Navbar({ user }: NavbarProps) {
             ) : (
               <Link
                 href="/login"
-                className="text-sm font-medium text-emerald-600"
+                className="text-sm font-bold text-black"
                 onClick={() => setMobileOpen(false)}
               >
                 Sign In

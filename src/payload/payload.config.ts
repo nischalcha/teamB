@@ -1,4 +1,4 @@
-import { Events, Locations, Media, Players, Services, Users } from '@/payload/collections';
+import { Bookings, Events, Locations, Media, Players, Services, Users } from '@/payload/collections';
 import { defaultLexical } from '@/payload/fields/defaultLexical';
 import { postgresAdapter } from '@payloadcms/db-postgres';
 import path from 'path';
@@ -16,7 +16,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Locations, Players, Services, Events],
+  collections: [Users, Media, Locations, Players, Services, Events, Bookings],
   editor: defaultLexical,
   db: postgresAdapter({
     pool: {

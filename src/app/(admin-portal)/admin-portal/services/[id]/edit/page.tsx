@@ -13,11 +13,16 @@ export default async function EditServicePage({ params }: PageProps) {
   const payload = await getPayload({ config });
 
   try {
-    const service = await payload.findByID({ collection: 'services', id });
+    const service = await payload.findByID({ collection: 'services', id, depth: 1 });
+
+    const thumbnail = service.thumbnail && typeof service.thumbnail === 'object'
+      ? { id: service.thumbnail.id, url: service.thumbnail.url! }
+      : null;
+
     return (
       <div className="p-6 lg:p-10">
-        <Link href="/admin-portal/services" className="text-sm text-emerald-600 hover:text-emerald-500">&larr; Back to Services</Link>
-        <h1 className="mt-4 text-2xl font-bold text-zinc-900 dark:text-zinc-50">Edit Service</h1>
+        <Link href="/admin-portal/services" className="text-sm text-black hover:text-primary">&larr; Back to Services</Link>
+        <h1 className="mt-4 text-2xl font-bold text-black">Edit Service</h1>
         <div className="mt-6">
           <ServiceForm service={{
             id: service.id,
@@ -27,6 +32,7 @@ export default async function EditServicePage({ params }: PageProps) {
             price: service.price,
             pricingUnit: service.pricingUnit,
             timing: service.timing,
+            thumbnail,
           }} />
         </div>
       </div>

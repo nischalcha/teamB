@@ -2,9 +2,9 @@ import { Container } from './Container';
 
 export function Footer() {
   return (
-    <footer className="border-t border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950">
+    <footer className="border-t border-black/10 bg-black">
       <Container className="flex flex-col items-center justify-between gap-4 py-8 sm:flex-row">
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="text-sm text-white/50">
           &copy; {new Date().getFullYear()} Flash Sports Academy. All rights reserved.
         </p>
         <div className="flex items-center gap-4">
@@ -12,7 +12,7 @@ export function Footer() {
             href="https://www.instagram.com/flash_sports10/"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-zinc-500 transition-colors hover:text-emerald-600 dark:text-zinc-400"
+            className="text-sm text-white/50 transition-colors hover:text-primary"
           >
             Instagram
           </a>
@@ -20,7 +20,7 @@ export function Footer() {
             href="https://www.facebook.com/flashsportsnepal/"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-zinc-500 transition-colors hover:text-emerald-600 dark:text-zinc-400"
+            className="text-sm text-white/50 transition-colors hover:text-primary"
           >
             Facebook
           </a>

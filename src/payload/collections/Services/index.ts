@@ -61,6 +61,11 @@ export const Services: CollectionConfig = {
       ],
     },
     {
+      name: 'thumbnail',
+      type: 'upload',
+      relationTo: 'media',
+    },
+    {
       name: 'description',
       type: 'richText',
     },

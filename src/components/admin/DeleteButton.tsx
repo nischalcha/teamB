@@ -23,7 +23,7 @@ export function DeleteButton({ collection, id }: DeleteButtonProps) {
       type="button"
       onClick={handleDelete}
       disabled={isPending}
-      className="rounded-md border border-red-300 px-3 py-1 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/20"
+      className="rounded-md border border-black/20 px-3 py-1 text-xs font-medium text-black/70 transition-colors hover:bg-black/5 disabled:opacity-50"
     >
       {isPending ? '...' : 'Delete'}
     </button>

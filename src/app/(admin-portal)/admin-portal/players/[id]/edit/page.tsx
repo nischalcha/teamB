@@ -13,17 +13,23 @@ export default async function EditPlayerPage({ params }: PageProps) {
   const payload = await getPayload({ config });
 
   try {
-    const player = await payload.findByID({ collection: 'players', id });
+    const player = await payload.findByID({ collection: 'players', id, depth: 1 });
+
+    const profileImage = player.profileImage && typeof player.profileImage === 'object'
+      ? { id: player.profileImage.id, url: player.profileImage.url! }
+      : null;
+
     return (
       <div className="p-6 lg:p-10">
-        <Link href="/admin-portal/players" className="text-sm text-emerald-600 hover:text-emerald-500">&larr; Back to Players</Link>
-        <h1 className="mt-4 text-2xl font-bold text-zinc-900 dark:text-zinc-50">Edit Player</h1>
+        <Link href="/admin-portal/players" className="text-sm text-black hover:text-primary">&larr; Back to Players</Link>
+        <h1 className="mt-4 text-2xl font-bold text-black">Edit Player</h1>
         <div className="mt-6">
           <PlayerForm player={{
             id: player.id,
             name: player.name,
             slug: player.slug,
             birthday: player.birthday,
+            profileImage,
           }} />
         </div>
       </div>

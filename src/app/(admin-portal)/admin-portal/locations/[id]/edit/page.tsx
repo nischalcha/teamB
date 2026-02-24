@@ -13,7 +13,7 @@ export default async function EditLocationPage({ params }: PageProps) {
   const payload = await getPayload({ config });
 
   try {
-    const location = await payload.findByID({ collection: 'locations', id });
+    const location = await payload.findByID({ collection: 'locations', id, depth: 1 });
     const courts = ((location.courts as Array<Record<string, unknown>>) || []).map((c) => ({
       courtType: c.courtType as 'clay' | 'mini',
       timing: c.timing as string,
@@ -21,10 +21,13 @@ export default async function EditLocationPage({ params }: PageProps) {
       level: c.level as 'beginner' | 'intermediate' | 'advanced' | 'all',
     }));
 
+    const thumbnail = location.thumbnail as Record<string, unknown> | null;
+    const thumbnailUrl = thumbnail?.url as string | null;
+
     return (
       <div className="p-6 lg:p-10">
-        <Link href="/admin-portal/locations" className="text-sm text-emerald-600 hover:text-emerald-500">&larr; Back to Locations</Link>
-        <h1 className="mt-4 text-2xl font-bold text-zinc-900 dark:text-zinc-50">Edit Location</h1>
+        <Link href="/admin-portal/locations" className="text-sm text-black hover:text-primary">&larr; Back to Locations</Link>
+        <h1 className="mt-4 text-2xl font-bold text-black">Edit Location</h1>
         <div className="mt-6">
           <LocationForm location={{
             id: location.id,
@@ -32,6 +35,7 @@ export default async function EditLocationPage({ params }: PageProps) {
             slug: location.slug,
             address: location.address,
             courts,
+            thumbnailUrl,
           }} />
         </div>
       </div>
