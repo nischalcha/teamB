@@ -32,22 +32,22 @@ export function PortalNav({ user, role }: PortalNavProps) {
   const links = role === 'admin' ? ADMIN_LINKS : USER_LINKS;
 
   return (
-    <aside className="flex w-64 flex-col border-r border-black/10 bg-white">
-      <div className="flex h-16 items-center border-b border-black/10 px-6">
-        <Link href="/" className="flex items-center gap-1.5 text-lg font-bold text-black">
-          <IoIosFlash className="h-6 w-6 text-primary" />
+    <aside className="flex w-72 flex-col border-r border-black/10 bg-white">
+      <div className="flex h-18 items-center border-b border-black/10 px-7">
+        <Link href="/" className="flex items-center gap-2 font-heading text-xl font-bold uppercase text-black">
+          <IoIosFlash className="h-7 w-7 text-primary" />
           Flash Sports Academy
         </Link>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 py-6">
+      <div className="flex-1 overflow-y-auto px-5 py-7">
         {role === 'admin' ? (
           <>
             <p className="mb-1 px-2 text-xs font-semibold uppercase tracking-wider text-black/50">Overview</p>
             <nav className="mt-2 flex flex-col gap-1">
               {ADMIN_LINKS.filter((l) => l.group === 'main').map((link) => (
                 <Link key={link.href} href={link.href}
-                  className="rounded-lg px-3 py-2 text-sm font-medium text-black/70 transition-colors hover:bg-primary/10 hover:text-black">
+                  className="rounded-lg px-3 py-2.5 text-base font-medium text-black/70 transition-colors hover:bg-primary/10 hover:text-black">
                   {link.label}
                 </Link>
               ))}
@@ -56,7 +56,7 @@ export function PortalNav({ user, role }: PortalNavProps) {
             <nav className="mt-2 flex flex-col gap-1">
               {ADMIN_LINKS.filter((l) => l.group === 'manage').map((link) => (
                 <Link key={link.href} href={link.href}
-                  className="rounded-lg px-3 py-2 text-sm font-medium text-black/70 transition-colors hover:bg-primary/10 hover:text-black">
+                  className="rounded-lg px-3 py-2.5 text-base font-medium text-black/70 transition-colors hover:bg-primary/10 hover:text-black">
                   {link.label}
                 </Link>
               ))}
@@ -65,7 +65,7 @@ export function PortalNav({ user, role }: PortalNavProps) {
             <nav className="mt-2 flex flex-col gap-1">
               {ADMIN_LINKS.filter((l) => l.group === 'other').map((link) => (
                 <Link key={link.href} href={link.href}
-                  className="rounded-lg px-3 py-2 text-sm font-medium text-black/70 transition-colors hover:bg-primary/10 hover:text-black">
+                  className="rounded-lg px-3 py-2.5 text-base font-medium text-black/70 transition-colors hover:bg-primary/10 hover:text-black">
                   {link.label}
                 </Link>
               ))}
@@ -77,7 +77,7 @@ export function PortalNav({ user, role }: PortalNavProps) {
             <nav className="mt-3 flex flex-col gap-1">
               {USER_LINKS.map((link) => (
                 <Link key={link.href} href={link.href}
-                  className="rounded-lg px-3 py-2 text-sm font-medium text-black/70 transition-colors hover:bg-primary/10 hover:text-black">
+                  className="rounded-lg px-3 py-2.5 text-base font-medium text-black/70 transition-colors hover:bg-primary/10 hover:text-black">
                   {link.label}
                 </Link>
               ))}
@@ -86,16 +86,16 @@ export function PortalNav({ user, role }: PortalNavProps) {
         )}
       </div>
 
-      <div className="border-t border-black/10 p-4">
+      <div className="border-t border-black/10 p-5">
         <div className="mb-3 flex items-center gap-3 px-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20 text-sm font-bold text-black">
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/20 text-base font-bold text-black">
             {user.name.charAt(0).toUpperCase()}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium text-black">
+            <p className="truncate text-base font-medium text-black">
               {user.name}
             </p>
-            <p className="truncate text-xs text-black/50">
+            <p className="truncate text-sm text-black/50">
               {user.email}
             </p>
           </div>
@@ -103,7 +103,7 @@ export function PortalNav({ user, role }: PortalNavProps) {
         <form action={logoutAction}>
           <button
             type="submit"
-            className="w-full rounded-lg border border-black/20 px-3 py-2 text-sm font-medium text-black/70 transition-colors hover:bg-black/5"
+            className="w-full rounded-lg border border-black/20 px-3 py-2.5 text-base font-medium text-black/70 transition-colors hover:bg-black/5"
           >
             Sign Out
           </button>

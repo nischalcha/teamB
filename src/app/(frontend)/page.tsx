@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { getPayload } from 'payload';
 import config from '@payload-config';
-import { AnimateInView } from '@/components/AnimateInView';
 import { Container } from '@/components/Container';
 
 export default async function HomePage() {
@@ -136,19 +135,19 @@ export default async function HomePage() {
       </section>
 
 {/* ───── Hero ───── */}
-<section className="relative h-[520px] w-full overflow-hidden sm:h-[600px]">
+<section className="relative h-[620px] w-full overflow-hidden sm:h-[840px]">
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
             backgroundImage:
-              "url('https://images.unsplash.com/photo-1554068865-24cecd4e34b8?auto=format&fit=crop&w=1920&q=80')",
+              "url('/assests/para4.jpg')",
           }}
         />
         <div className="absolute inset-0 bg-linear-to-t from-black via-black/60 to-transparent" />
 
         <div className="absolute inset-x-0 bottom-20 p-6 sm:p-12">
           <Container>
-            <div className="flex flex-col items-center justify-center">
+            <div className="mx-auto flex max-w-3xl flex-col items-center justify-center text-center">
             <span className="mb-4 inline-block bg-primary px-1 py-1 text-xs font-bold uppercase tracking-widest text-black">
               Nepal&apos;s #1 Tennis Academy
             </span>
@@ -160,10 +159,10 @@ export default async function HomePage() {
               World-class coaching and premium clay courts across our Baluwatar
               &amp; Budhanilkantha facilities.
             </p>
-            <div className="mt-8 flex flex-wrap gap-4">
+            <div className="mt-8 flex flex-wrap justify-center gap-4">
               <Link
                 href="/availability"
-                className="inline-flex items-center gap-2 bg-primary px-8 py-4 text-sm font-bold uppercase tracking-wide text-black transition-colors hover:bg-primary-dark"
+                className="inline-flex rounded-full items-center gap-2 bg-primary px-8 py-4 text-sm font-bold uppercase tracking-wide text-black transition-colors hover:bg-primary-dark"
               >
                 Book Free Lesson
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -172,7 +171,7 @@ export default async function HomePage() {
               </Link>
               <Link
                 href="/players"
-                className="inline-flex items-center border-2 border-white px-8 py-4 text-sm font-semibold text-white transition-colors hover:bg-white hover:text-black"
+                className="inline-flex rounded-full items-center border-2 border-white px-8 py-4 text-sm font-semibold text-white transition-colors hover:bg-white hover:text-black"
               >
                 Meet Our Players
               </Link>
@@ -329,8 +328,16 @@ export default async function HomePage() {
       )}
 
       {/* ───── CTA ───── */}
-      <section className="bg-black py-20 sm:py-28">
-        <Container className="text-center">
+      <section className="relative h-[650px] overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: "url('/assests/para2.jpg')",
+          }}
+        />
+        <div className="absolute inset-0 bg-black/65" />
+
+        <Container className="relative z-10 flex h-full flex-col items-center justify-center text-center">
           <h2 className="text-3xl font-extrabold uppercase italic tracking-tight text-white sm:text-4xl">
             Ready to Hit the Court?
           </h2>
@@ -341,7 +348,7 @@ export default async function HomePage() {
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link
               href="/availability"
-              className="inline-flex items-center gap-2 bg-primary px-10 py-4 text-sm font-bold uppercase tracking-wide text-black transition-colors hover:bg-primary-dark"
+              className="inline-flex rounded-full items-center gap-2 bg-primary px-10 py-4 text-sm font-bold uppercase tracking-wide text-black transition-colors hover:bg-primary-dark"
             >
               Book Your Free Lesson
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -350,7 +357,7 @@ export default async function HomePage() {
             </Link>
             <Link
               href="/players"
-              className="inline-flex items-center border-2 border-white px-10 py-4 text-sm font-semibold text-white transition-colors hover:bg-white hover:text-black"
+              className="inline-flex rounded-full items-center border-2 border-white px-10 py-4 text-sm font-semibold text-white transition-colors hover:bg-white hover:text-black"
             >
               Meet Our Players
             </Link>

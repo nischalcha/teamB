@@ -26,10 +26,10 @@ export function Navbar({ user }: NavbarProps) {
     href === '/' ? pathname === '/' : pathname.startsWith(href);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-black/10 bg-white/80 backdrop-blur-md">
-      <Container className="flex h-16 items-center justify-between">
-        <Link href="/" className="flex items-center gap-1.5 font-heading text-xl font-extrabold uppercase italic tracking-tight text-black">
-          <IoIosFlash className="h-7 w-7 text-primary" />
+    <header className="sticky top-0 z-50 border-b border-black/10 bg-white/90 backdrop-blur-md">
+      <Container className="flex h-18 items-center justify-between">
+        <Link href="/" className="flex items-center gap-2 font-heading text-2xl font-extrabold uppercase italic tracking-tight text-black">
+          <IoIosFlash className="h-8 w-8 text-primary" />
           Flash Sports Academy
         </Link>
 
@@ -38,7 +38,7 @@ export function Navbar({ user }: NavbarProps) {
             <Link
               key={link.href}
               href={link.href}
-              className={`font-heading text-sm font-semibold uppercase transition-colors hover:text-primary ${
+              className={`font-heading text-base font-semibold uppercase transition-colors hover:text-primary ${
                 isActive(link.href) ? 'text-primary' : 'text-black/60'
               }`}
             >
@@ -71,14 +71,14 @@ export function Navbar({ user }: NavbarProps) {
             {user ? (
               <Link
                 href={portalHref}
-                className="ml-2 bg-black rounded-full px-4 py-1.5 font-heading text-sm font-semibold uppercase text-white transition-colors hover:bg-primary hover:text-black"
+                className="ml-2 rounded-full bg-black px-5 py-2 font-heading text-base font-semibold uppercase text-white transition-colors hover:bg-primary hover:text-black"
               >
                 {user.role === 'admin' ? 'Admin Portal' : 'Dashboard'}
               </Link>
             ) : (
               <Link
                 href="/login"
-                className="ml-2 rounded-full bg-black px-4 py-1.5 font-heading text-sm font-semibold uppercase text-white transition-colors hover:bg-primary hover:text-black"
+                className="ml-2 rounded-full bg-black px-5 py-2 font-heading text-base font-semibold uppercase text-white transition-colors hover:bg-primary hover:text-black"
               >
                 Sign In
               </Link>
@@ -88,7 +88,7 @@ export function Navbar({ user }: NavbarProps) {
 
         <button
           type="button"
-          className="rounded-md p-2 text-black/60 md:hidden"
+          className="rounded-md p-2.5 text-black/60 md:hidden"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
         >
@@ -104,12 +104,12 @@ export function Navbar({ user }: NavbarProps) {
 
       {mobileOpen && (
         <div className="border-t border-black/10 bg-white md:hidden">
-          <Container className="flex flex-col gap-4 py-4">
+          <Container className="flex flex-col gap-4 py-5">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`font-heading text-sm font-semibold uppercase ${
+                className={`font-heading text-base font-semibold uppercase ${
                   isActive(link.href) ? 'text-primary' : 'text-black/70'
                 }`}
                 onClick={() => setMobileOpen(false)}
@@ -120,7 +120,7 @@ export function Navbar({ user }: NavbarProps) {
             {user ? (
               <Link
                 href={portalHref}
-                className="text-sm font-bold text-black"
+                className="text-base font-bold text-black"
                 onClick={() => setMobileOpen(false)}
               >
                 {user.role === 'admin' ? 'Admin Portal' : 'Dashboard'}
@@ -128,7 +128,7 @@ export function Navbar({ user }: NavbarProps) {
             ) : (
               <Link
                 href="/login"
-                className="text-sm font-bold text-black"
+                className="text-base font-bold text-black"
                 onClick={() => setMobileOpen(false)}
               >
                 Sign In
