@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "flash-sports-academy": {
+      "command": "npx",
+      "args": ["tsx", "index.ts"],
+      "cwd": "/absolute/path/to/hack-ai-thon/mcp-server",
+      "env": {
+        "MCP_APP_URL": "http://localhost:3000"
+      }
+    }
+  }
+}

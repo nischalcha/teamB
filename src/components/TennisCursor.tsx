@@ -36,6 +36,7 @@ export function TennisCursor() {
 
       cursor.style.transform = `translate3d(${currentX.current}px, ${currentY.current}px, 0) translate(-50%, -50%) scale(${scale})`;
       cursor.style.opacity = String(opacity);
+      cursor.classList.toggle('tennis-cursor-spin', isInteractive.current);
 
       animationFrame.current = window.requestAnimationFrame(animate);
     };
@@ -101,10 +102,13 @@ export function TennisCursor() {
     <div
       ref={cursorRef}
       aria-hidden="true"
-      className="pointer-events-none fixed left-0 top-0 z-[99999] h-5 w-5 rounded-full border border-black/20 bg-primary opacity-0 shadow-[0_6px_14px_rgba(0,0,0,0.18)] transition-[opacity] duration-200"
+      className="pointer-events-none fixed left-0 top-0 z-[99999] h-8 w-8 opacity-0 transition-[opacity] duration-200"
     >
-      <span className="absolute -left-[10%] top-[20%] h-[55%] w-[120%] rounded-full border-t-2 border-black/50" />
-      <span className="absolute -left-[10%] bottom-[20%] h-[55%] w-[120%] rounded-full border-b-2 border-black/50" />
+      <img
+        src="/assests/tennis-ball.png"
+        alt=""
+        className="h-full w-full object-contain"
+      />
     </div>
   );
 }

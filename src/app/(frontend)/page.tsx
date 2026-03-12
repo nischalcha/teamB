@@ -3,6 +3,8 @@ import { getPayload } from 'payload';
 import config from '@payload-config';
 import { Container } from '@/components/Container';
 import { JoinButton } from '@/components/JoinButton';
+import { ParallaxImageColumn } from '@/components/ParallaxImageColumn';
+import { ParallaxSection } from '@/components/ParallaxSection';
 import { getCurrentUser } from '@/lib/auth';
 
 export default async function HomePage() {
@@ -31,16 +33,14 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* ───── Banner ───── */}
+      {/* ───── Banner (parallax on side images) ───── */}
       <section className="w-full">
         <div className="grid grid-cols-1 md:grid-cols-3">
-          <div className="relative h-[300px] overflow-hidden md:h-[600px]">
-            <img
-              src="/assests/tennis1.jpg"
-              alt="Tennis ball in net"
-              className="h-full w-full object-cover"
-            />
-          </div>
+          <ParallaxImageColumn
+            src="/assests/tennis1.jpg"
+            alt="Tennis ball in net"
+            speed={0.18}
+          />
 
           <div className="flex flex-col items-center justify-center bg-primary px-8 py-12 text-center md:py-0">
             <span className="mb-3 text-xs font-bold uppercase tracking-[0.25em] text-black/60">
@@ -61,13 +61,11 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          <div className="relative h-[300px] overflow-hidden md:h-[600px]">
-            <img
-              src="/assests/tennis2.jpg"
-              alt="Tennis rackets on clay court"
-              className="h-full w-full object-cover"
-            />
-          </div>
+          <ParallaxImageColumn
+            src="/assests/tennis2.jpg"
+            alt="Tennis rackets on clay court"
+            speed={0.18}
+          />
         </div>
       </section>
 
@@ -138,52 +136,48 @@ export default async function HomePage() {
         </Container>
       </section>
 
-{/* ───── Hero ───── */}
-<section className="relative h-[620px] w-full overflow-hidden sm:h-[840px]">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage:
-              "url('/assests/para4.jpg')",
-          }}
-        />
-        <div className="absolute inset-0 bg-linear-to-t from-black via-black/60 to-transparent" />
-
+{/* ───── Hero (parallax) ───── */}
+      <ParallaxSection
+        className="h-[620px] w-full sm:h-[840px]"
+        backgroundImage="/assests/para4.jpg"
+        speed={0.4}
+        overlay={<div className="bg-linear-to-t from-black via-black/60 to-transparent" />}
+      >
         <div className="absolute inset-x-0 bottom-20 p-6 sm:p-12">
           <Container>
             <div className="mx-auto flex max-w-3xl flex-col items-center justify-center text-center">
-            <span className="mb-4 inline-block bg-primary px-1 py-1 text-xs font-bold uppercase tracking-widest text-black">
-              Nepal&apos;s #1 Tennis Academy
-            </span>
-            <h1 className="text-4xl font-extrabold uppercase italic leading-none tracking-tight text-white sm:text-5xl lg:text-6xl">
-              Unleash Your
-              <span className="text-primary">Tennis Potential</span>
-            </h1>
-            <p className="mt-4 text-base text-white/70 sm:text-lg">
-              World-class coaching and premium clay courts across our Baluwatar
-              &amp; Budhanilkantha facilities.
-            </p>
-            <div className="mt-8 flex flex-wrap justify-center gap-4">
-              <Link
-                href="/availability"
-                className="inline-flex rounded-full items-center gap-2 bg-primary px-8 py-4 text-sm font-bold uppercase tracking-wide text-black transition-colors hover:bg-primary-dark"
-              >
-                Book Free Lesson
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </Link>
-              <Link
-                href="/players"
-                className="inline-flex rounded-full items-center border-2 border-white px-8 py-4 text-sm font-semibold text-white transition-colors hover:bg-white hover:text-black"
-              >
-                Meet Our Players
-              </Link>
-            </div>
+              <span className="mb-4 inline-block bg-primary px-1 py-1 text-xs font-bold uppercase tracking-widest text-black">
+                Nepal&apos;s #1 Tennis Academy
+              </span>
+              <h1 className="text-4xl font-extrabold uppercase italic leading-none tracking-tight text-white sm:text-5xl lg:text-6xl">
+                Unleash Your
+                <span className="text-primary">Tennis Potential</span>
+              </h1>
+              <p className="mt-4 text-base text-white/70 sm:text-lg">
+                World-class coaching and premium clay courts across our Baluwatar
+                &amp; Budhanilkantha facilities.
+              </p>
+              <div className="mt-8 flex flex-wrap justify-center gap-4">
+                <Link
+                  href="/availability"
+                  className="inline-flex rounded-full items-center gap-2 bg-primary px-8 py-4 text-sm font-bold uppercase tracking-wide text-black transition-colors hover:bg-primary-dark"
+                >
+                  Book Free Lesson
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </Link>
+                <Link
+                  href="/players"
+                  className="inline-flex rounded-full items-center border-2 border-white px-8 py-4 text-sm font-semibold text-white transition-colors hover:bg-white hover:text-black"
+                >
+                  Meet Our Players
+                </Link>
+              </div>
             </div>
           </Container>
         </div>
-      </section>
+      </ParallaxSection>
       {/* ───── Locations ───── */}
       <section className="bg-black/5 py-16 sm:py-24">
         <Container>
@@ -331,17 +325,14 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* ───── CTA ───── */}
-      <section className="relative h-[650px] overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage: "url('/assests/para2.jpg')",
-          }}
-        />
-        <div className="absolute inset-0 bg-black/65" />
-
-        <Container className="relative z-10 flex h-full flex-col items-center justify-center text-center">
+      {/* ───── CTA (parallax) ───── */}
+      <ParallaxSection
+        className="h-[650px]"
+        backgroundImage="/assests/para2.jpg"
+        speed={0.4}
+        overlay={<div className="bg-black/65" />}
+      >
+        <Container className="flex h-full flex-col items-center justify-center text-center">
           <h2 className="text-3xl font-extrabold uppercase italic tracking-tight text-white sm:text-4xl">
             Ready to Hit the Court?
           </h2>
@@ -368,7 +359,7 @@ export default async function HomePage() {
             </Link>
           </div>
         </Container>
-      </section>
+      </ParallaxSection>
     </>
   );
 }

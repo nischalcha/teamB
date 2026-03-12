@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { ChatBubble } from '@/components/ChatBubble';
 import { Footer } from '@/components/Footer';
 import { Navbar } from '@/components/Navbar';
 import { TennisCursor } from '@/components/TennisCursor';
@@ -25,6 +26,7 @@ export default async function RootLayout({
         <Navbar user={user} />
         <main className="flex-1">{children}</main>
         <Footer />
+        <ChatBubble user={user} />
       </body>
     </html>
   );

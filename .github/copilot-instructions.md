@@ -287,6 +287,7 @@ SMTP_PORT=           # SMTP port
 SMTP_USER=           # SMTP username
 SMTP_PASS=           # SMTP password
 BOOKING_EMAIL=       # Email address for booking notifications
+GEMINI_API_KEY=      # Optional: Google Gemini API key for chat bubble (get from Google AI Studio). If unset, chat uses keyword fallback.
 ```
 
 ---

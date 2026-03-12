@@ -95,3 +95,16 @@ html.tennis-cursor-active label,
 html.tennis-cursor-active [role='button'] {
   cursor: none !important;
 }
+
+@keyframes tennis-cursor-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.tennis-cursor-spin img {
+  animation: tennis-cursor-spin 0.5s linear infinite;
+}
