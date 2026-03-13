@@ -13,15 +13,19 @@ export default async function MyBookingsPage() {
   const user = await getCurrentUser();
   const payload = await getPayload({ config });
 
-  const { docs: bookings } = await payload.find({
-    collection: 'bookings',
-    where: {
-      user: { equals: user?.id },
-    },
-    sort: '-date',
-    limit: 50,
-    depth: 1,
-  });
+  // During prerender (build) or when not logged in, no user — avoid querying with invalid id (NaN)
+  const userId = user?.id;
+  const hasValidUser = userId !== undefined && userId !== null && userId !== '' && !Number.isNaN(Number(userId));
+
+  const { docs: bookings } = hasValidUser
+    ? await payload.find({
+        collection: 'bookings',
+        where: { user: { equals: userId } },
+        sort: '-date',
+        limit: 50,
+        depth: 1,
+      })
+    : { docs: [] };
 
   const upcoming = bookings.filter((b) => {
     if (b.status === 'cancelled') return false;
