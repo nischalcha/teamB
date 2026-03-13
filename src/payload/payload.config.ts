@@ -9,7 +9,11 @@ import { fileURLToPath } from 'url';
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
+// Required in production so auth cookies work (e.g. set PAYLOAD_PUBLIC_SERVER_URL=https://your-app.onrender.com on Render)
+const serverURL = process.env.PAYLOAD_PUBLIC_SERVER_URL || process.env.NEXT_PUBLIC_APP_URL;
+
 export default buildConfig({
+  serverURL: serverURL || undefined,
   admin: {
     user: Users.slug,
     importMap: {
