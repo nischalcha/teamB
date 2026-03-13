@@ -7,29 +7,29 @@ import { ParallaxImageColumn } from '@/components/ParallaxImageColumn';
 import { ParallaxSection } from '@/components/ParallaxSection';
 import { getCurrentUser } from '@/lib/auth';
 
+async function getHomePageData() {
+  try {
+    const payload = await getPayload({ config });
+    const [servicesRes, locationsRes, eventsRes] = await Promise.all([
+      payload.find({ collection: 'services', limit: 10, depth: 1 }),
+      payload.find({ collection: 'locations', limit: 10, depth: 1 }),
+      payload.find({ collection: 'events', limit: 6, depth: 1, sort: 'startDate' }),
+    ]);
+    return {
+      services: servicesRes.docs,
+      locations: locationsRes.docs,
+      events: eventsRes.docs,
+    };
+  } catch (e) {
+    console.error('Home page data fetch failed:', e);
+    return { services: [], locations: [], events: [] };
+  }
+}
+
 export default async function HomePage() {
   const user = await getCurrentUser();
   const isLoggedIn = !!user;
-  const payload = await getPayload({ config });
-
-  const { docs: services } = await payload.find({
-    collection: 'services',
-    limit: 10,
-    depth: 1,
-  });
-
-  const { docs: locations } = await payload.find({
-    collection: 'locations',
-    limit: 10,
-    depth: 1,
-  });
-
-  const { docs: events } = await payload.find({
-    collection: 'events',
-    limit: 6,
-    depth: 1,
-    sort: 'startDate',
-  });
+  const { services, locations, events } = await getHomePageData();
 
   return (
     <>

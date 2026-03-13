@@ -19,7 +19,12 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const user = await getCurrentUser();
+  let user = null;
+  try {
+    user = await getCurrentUser();
+  } catch (e) {
+    console.error('Auth failed in layout:', e);
+  }
 
   return (
     <html lang="en">
