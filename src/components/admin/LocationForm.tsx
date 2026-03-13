@@ -31,7 +31,7 @@ export function LocationForm({ location }: LocationFormProps) {
   const removeCourt = (idx: number) => setCourts(courts.filter((_, i) => i !== idx));
   const updateCourt = (idx: number, field: keyof Court, value: string | number) => {
     const updated = [...courts];
-    (updated[idx] as Record<string, unknown>)[field] = value;
+    (updated[idx] as unknown as Record<string, unknown>)[field] = value;
     setCourts(updated);
   };
 

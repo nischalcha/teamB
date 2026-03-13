@@ -21,14 +21,14 @@ export default async function EditEventPage({ params }: PageProps) {
       : null;
 
     const images = (event.images ?? [])
-      .map((item) => {
+      .map((item: { image?: number | { id: number; url?: string | null } }) => {
         const img = item.image;
         if (img && typeof img === 'object') {
           return { id: img.id, url: img.url! };
         }
         return null;
       })
-      .filter((x): x is { id: number; url: string } => x !== null);
+      .filter((x: { id: number; url: string } | null): x is { id: number; url: string } => x !== null);
 
     return (
       <div className="p-6 lg:p-10">

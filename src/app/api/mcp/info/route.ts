@@ -21,7 +21,7 @@ export async function GET() {
       }),
     ]);
 
-    const pricingSummary = (servicesRes.docs as Array<{ name: string; category: string; price: number; pricingUnit: string; timing: string }>).map((s) => ({
+    const pricingSummary = (servicesRes.docs as unknown as Array<{ name: string; category: string; price: number; pricingUnit: string; timing: string }>).map((s) => ({
       name: s.name,
       category: s.category,
       price: s.price,

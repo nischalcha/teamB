@@ -34,7 +34,7 @@ async function uploadMedia(
       size: file.size,
     },
   });
-  return media.id;
+  return typeof media.id === 'number' ? media.id : parseInt(String(media.id), 10);
 }
 
 async function handleSingleUpload(

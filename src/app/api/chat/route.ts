@@ -18,6 +18,41 @@ function todayYYYYMMDD(): string {
   return new Date().toISOString().split('T')[0];
 }
 
+type PayloadInstance = Awaited<ReturnType<typeof getPayload>>;
+
+async function getAvailabilityForDate(payload: PayloadInstance, date: string): Promise<string> {
+  const { docs: locations } = await payload.find({ collection: 'locations', limit: 1 });
+  if (locations.length === 0) return 'No locations set up yet.';
+  const loc = locations[0];
+  const { docs: bookings } = await payload.find({
+    collection: 'bookings',
+    where: {
+      and: [
+        { location: { equals: loc.id } },
+        { date: { equals: date } },
+        { status: { equals: 'confirmed' } },
+      ],
+    },
+    limit: 500,
+  });
+  const counts: Record<string, number> = {};
+  for (const b of bookings) {
+    const key = `${b.courtType}::${b.timeSlot}`;
+    counts[key] = (counts[key] || 0) + 1;
+  }
+  const courts = (loc.courts as Array<{ courtType: string; availableSlots: number }>) || [];
+  const parts: string[] = [];
+  for (const court of courts) {
+    const max = court.availableSlots ?? 0;
+    for (const slot of TIME_SLOTS) {
+      const key = `${court.courtType}::${slot}`;
+      const left = Math.max(0, max - (counts[key] || 0));
+      if (left > 0) parts.push(`${court.courtType} ${slot}: ${left} left`);
+    }
+  }
+  return parts.length > 0 ? parts.slice(0, 8).join('; ') : 'No slots available for this date.';
+}
+
 async function buildAcademyContext(payload: Awaited<ReturnType<typeof getPayload>>) {
   const [locationsRes, servicesRes, eventsRes, bookingsRes] = await Promise.all([
     payload.find({ collection: 'locations', limit: 10, depth: 0 }),
@@ -265,7 +300,12 @@ export async function POST(request: Request) {
     }
 
     const defaultMsg = 'I can help with availability, booking, services, events, players, and contact. Try: "Is there availability tomorrow?" or "How do I book?"';
-    return await jsonReply(defaultMsg, { href: '/availability', label: 'Book a court' }, apiKey);
+    const link = { href: '/availability', label: 'Book a court' as const };
+    if (apiKey) {
+      const { reply } = await toHtmlReply(apiKey, defaultMsg);
+      return NextResponse.json({ reply, link });
+    }
+    return NextResponse.json({ reply: defaultMsg, link });
   } catch (e) {
     console.error(e);
     return NextResponse.json(

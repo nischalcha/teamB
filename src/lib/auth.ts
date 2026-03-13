@@ -21,7 +21,7 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
 
     return {
       id: user.id,
-      email: user.email,
+      email: user.email ?? '',
       name: (user as Record<string, unknown>).name as string,
       role: ((user as Record<string, unknown>).role as UserRole) || 'user',
     };

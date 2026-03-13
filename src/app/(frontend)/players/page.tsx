@@ -1,4 +1,4 @@
-import { getPayload } from 'payload';
+import { getPayload, type Where } from 'payload';
 import config from '@payload-config';
 import { Container } from '@/components/Container';
 import { AgeFilter } from './AgeFilter';
@@ -24,7 +24,7 @@ export default async function PlayersPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const payload = await getPayload({ config });
 
-  const whereClause: Record<string, unknown> = {};
+  const whereClause: Where = {};
   const minAge = params.minAge ? parseInt(params.minAge, 10) : undefined;
   const maxAge = params.maxAge ? parseInt(params.maxAge, 10) : undefined;
 
