@@ -5,6 +5,8 @@ import { redirect } from 'next/navigation';
 import { PortalNav } from '@/components/PortalNav';
 import { TennisCursor } from '@/components/TennisCursor';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Dashboard | Flash Sports Academy',
 };

@@ -6,6 +6,8 @@ import { TennisCursor } from '@/components/TennisCursor';
 import { getCurrentUser } from '@/lib/auth';
 import './globals.css';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Flash Sports Academy',
   description:

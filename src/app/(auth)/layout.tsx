@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import '../(frontend)/globals.css';
 import { TennisCursor } from '@/components/TennisCursor';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Flash Sports Academy',
 };
