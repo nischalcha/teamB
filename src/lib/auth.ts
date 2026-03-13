@@ -1,4 +1,4 @@
-import { headers as getHeaders } from 'next/headers';
+import { cookies, headers as getHeaders } from 'next/headers';
 import { getPayload } from 'payload';
 import config from '@payload-config';
 
@@ -15,7 +15,16 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
   try {
     const payload = await getPayload({ config });
     const headersList = await getHeaders();
-    const { user } = await payload.auth({ headers: headersList });
+    const cookieStore = await cookies();
+
+    // In production, Payload's cookie strategy can fail (Origin/csrf). Pass token explicitly.
+    const token = cookieStore.get('payload-token')?.value;
+    const authHeaders = new Headers(headersList);
+    if (token) {
+      authHeaders.set('Authorization', `JWT ${token}`);
+    }
+
+    const { user } = await payload.auth({ headers: authHeaders });
 
     if (!user) return null;
 

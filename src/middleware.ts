@@ -13,68 +13,15 @@ export async function middleware(request: NextRequest) {
   const isUserRoute = PROTECTED_USER_ROUTES.some((route) => pathname.startsWith(route));
   const isAdminRoute = PROTECTED_ADMIN_ROUTES.some((route) => pathname.startsWith(route));
 
+  // No token on protected route -> send to login (layout will validate token via getCurrentUser)
   if (!token && (isUserRoute || isAdminRoute)) {
     const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('from', pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  if (token && (isUserRoute || isAdminRoute)) {
-    try {
-      const meResponse = await fetch(`${request.nextUrl.origin}/api/users/me`, {
-        headers: { Authorization: `JWT ${token}` },
-      });
-
-      if (!meResponse.ok) {
-        const response = NextResponse.redirect(new URL('/login', request.url));
-        response.cookies.delete('payload-token');
-        return response;
-      }
-
-      const { user } = await meResponse.json();
-
-      if (!user) {
-        const response = NextResponse.redirect(new URL('/login', request.url));
-        response.cookies.delete('payload-token');
-        return response;
-      }
-
-      const role = user.role as string;
-
-      if (isAdminRoute && role !== 'admin') {
-        return NextResponse.redirect(new URL('/dashboard', request.url));
-      }
-
-      if (isUserRoute && role === 'admin') {
-        return NextResponse.redirect(new URL('/admin-portal', request.url));
-      }
-    } catch {
-      const response = NextResponse.redirect(new URL('/login', request.url));
-      response.cookies.delete('payload-token');
-      return response;
-    }
-  }
-
-  if (token && isAuthRoute) {
-    try {
-      const meResponse = await fetch(`${request.nextUrl.origin}/api/users/me`, {
-        headers: { Authorization: `JWT ${token}` },
-      });
-
-      if (meResponse.ok) {
-        const { user } = await meResponse.json();
-        if (user) {
-          const role = user.role as string;
-          return NextResponse.redirect(
-            new URL(role === 'admin' ? '/admin-portal' : '/dashboard', request.url),
-          );
-        }
-      }
-    } catch {
-      // Token invalid, let them access auth routes
-    }
-  }
-
+  // Token present: let the request through. Layouts will call getCurrentUser() and redirect if invalid.
+  // (We avoid fetching /api/users/me here because that often fails in production Edge.)
   return NextResponse.next();
 }
 
