@@ -178,6 +178,75 @@ export default async function HomePage() {
           </Container>
         </div>
       </ParallaxSection>
+      {/* ───── About Us (Coaches) ───── */}
+      <section className="bg-white py-16 sm:py-24">
+        <Container>
+          <div className="mx-auto mb-10 max-w-2xl text-center">
+            <h2 className="text-2xl font-bold uppercase italic tracking-tight text-black sm:text-3xl">
+              About Us
+            </h2>
+            <p className="mt-3 text-base text-black/60">
+              Our coaching team brings years of experience developing players of all levels
+              with structured training, discipline, and a love for the game.
+            </p>
+          </div>
+
+          <div className="mx-auto grid max-w-4xl gap-6 sm:grid-cols-2">
+            <div className="rounded-2xl border border-black/10 bg-black/5 p-6 text-left">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-black/50">
+                Director / Head Coach
+              </p>
+              <p className="mt-2 text-xl font-extrabold uppercase italic text-black">
+                Shrawan Karki
+              </p>
+              <p className="mt-3 text-sm text-black/60">
+                Leads the academy&apos;s training philosophy and long-term player development,
+                from beginners to competitive athletes.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-black/10 bg-black/5 p-6 text-left">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-black/50">
+                Coach
+              </p>
+              <p className="mt-2 text-xl font-extrabold uppercase italic text-black">
+                Ram Sir
+              </p>
+              <p className="mt-3 text-sm text-black/60">
+                Focuses on fundamentals, footwork, and helping players build solid technical
+                foundations on court.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-black/10 bg-black/5 p-6 text-left">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-black/50">
+                Coach
+              </p>
+              <p className="mt-2 text-xl font-extrabold uppercase italic text-black">
+                Ranjit Sir
+              </p>
+              <p className="mt-3 text-sm text-black/60">
+                Specialises in match play, strategy, and building confidence during
+                tournaments and league matches.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-black/10 bg-black/5 p-6 text-left">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-black/50">
+                Coach
+              </p>
+              <p className="mt-2 text-xl font-extrabold uppercase italic text-black">
+                Abhi Sir
+              </p>
+              <p className="mt-3 text-sm text-black/60">
+                Works closely with juniors, focusing on coordination, fun drills,
+                and developing strong habits early.
+              </p>
+            </div>
+          </div>
+        </Container>
+      </section>
+
       {/* ───── Locations ───── */}
       <section className="bg-black/5 py-16 sm:py-24">
         <Container>
